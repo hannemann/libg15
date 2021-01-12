@@ -266,7 +266,7 @@ static usb_dev_handle * findAndOpenG15() {
     int i;
     for (i=0; g15_devices[i].name !=NULL  ;i++){
         g15_log(stderr,G15_LOG_INFO,"Trying to find %s\n",g15_devices[i].name);
-        if(keyboard_device = findAndOpenDevice(g15_devices[i],i)){
+        if(keyboard_device == findAndOpenDevice(g15_devices[i],i)){
             break;
         }
         else
