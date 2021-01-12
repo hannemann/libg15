@@ -1,4 +1,4 @@
-libg15
+LIBG15
 ======
 
 This is a library to handle the LCD and extra keys on the Logitech G15 Gaming

@@ -47,3 +47,5 @@
 * Add laptop GamePanel support.
 1.2.7
 * Fix keypress detection for G15v2 keyboards
+1.2.8
+* Forked from original to continue working on it.
