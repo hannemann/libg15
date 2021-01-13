@@ -6,7 +6,7 @@ pkgbase = libg15
 	arch = x86_64
 	license = GPL
 	depends = libusb-compat
-	source = https://downloads.sourceforge.net/g15tools/libg15-1.2.7.tar.bz2
+	source = https://gitlab.com/menelkir/libg15/-/archive/v1.2.8/libg15-1.2.8.tar.bz2
 	sha512sums = 7f166eb3bc8f581c3ab44fcdfb036a83b22977e75941faabc5643b83ad84b91ef1f9030ec75d8484c6de1700356b212773fbdd8b8438b5d680737572bc7cb44b
 
 pkgname = libg15
