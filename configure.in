@@ -1,21 +1,19 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_PREREQ([2.70])
-AC_INIT([libg15],[1.2.8],[menelkir@itroll.org])
+AC_PREREQ(2.59)
+AC_INIT(libg15, 1.2.8, menelkir@itroll.org)
 AC_PREFIX_DEFAULT(/usr)
 AC_CONFIG_AUX_DIR(config)
 AC_CANONICAL_TARGET()
 
 AM_INIT_AUTOMAKE()
 AC_CONFIG_SRCDIR([libg15.c])
-AC_CONFIG_HEADERS([config.h])
+AC_CONFIG_HEADER([config.h])
 
 # Checks for programs.
 AC_PROG_CC
 AC_PROG_LIBTOOL
-AC_PROG_RANLIB
-AC_PROG_CPP
 
 case $host_os in
 	*linux*) 
@@ -41,15 +39,7 @@ if test "x$libusb_blocks" == "xtrue"; then
 fi
 
 # Checks for header files.
-m4_warn([obsolete],
-[The preprocessor macro `STDC_HEADERS' is obsolete.
-  Except in unusual embedded environments, you can safely include all
-  ISO C90 headers unconditionally.])dnl
-# Autoupdate added the next two lines to ensure that your configure
-# script's behavior did not change.  They are probably safe to remove.
-AC_CHECK_INCLUDES_DEFAULT
-AC_PROG_EGREP
-
+AC_HEADER_STDC
 AC_CHECK_HEADERS([string.h])
 AC_CHECK_HEADERS([usb.h])
 
