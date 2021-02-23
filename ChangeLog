@@ -49,3 +49,5 @@
 * Fix keypress detection for G15v2 keyboards
 1.2.8
 * Forked from original to continue working on it.
+1.2.9
+* Fixed some internal typos
