@@ -17,7 +17,7 @@ Supported Hardware
 - Original G15 keyboard
 - G11 keyboard
 - Z10 speakers
-- 2nd revision of the G15 (amber backlight, 6 'G' keys, LCD)
+- G15 keyboard v2 (amber backlight, 6 'G' keys, LCD)
 - Gamepanel available on some laptops
 
 =============
