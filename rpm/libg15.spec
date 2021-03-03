@@ -3,15 +3,15 @@
 %define prefix	/usr
 Summary: library to control logitech G15 keyboards
 Name: libg15
-Version: 1.2.9
+Version: 3.0
 Release: 1
 Copyright: GPL
 Group: Applications/System
-Source: https://gitlab.com/menelkir/libg15/-/archive/1.2.9/libg15-1.2.9.tar.bz2
+Source: https://gitlab.com/menelkir/libg15/-/archive/3.0/libg15-3.0.tar.bz2
 URL: https://gitlab.com/menelkir/libg15
 Distribution: Linux
 Vendor: NONE
-Packager: Mike Lampard <mlampard@users.sourceforge.net>
+Packager: Daniel Menelkir <menelkir@itroll.org>
 Buildroot: /var/tmp/libg15-%{PACKAGE_VERSION}-root
 Requires: libusb
 BuildRequires: libusb-devel
