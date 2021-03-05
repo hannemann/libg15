@@ -1,3 +1,6 @@
+libg15 3.0.1 buster; urgency=low
+  * Added support for G510 keyboards
+
 libg15 3.0 buster; urgency=low
   * Revamp the code
 

@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.71])
-AC_INIT([libg15],[3.0],[menelkir@itroll.org])
+AC_INIT([libg15],[3.0.1],[menelkir@itroll.org])
 AC_PREFIX_DEFAULT(/usr)
 AC_CONFIG_AUX_DIR(config)
 AC_CANONICAL_TARGET()

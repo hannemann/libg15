@@ -3,7 +3,7 @@
 %define prefix	/usr
 Summary: library to control logitech G15 keyboards
 Name: libg15
-Version: 3.0
+Version: 3.0.1
 Release: 1
 Copyright: GPL
 Group: Applications/System
