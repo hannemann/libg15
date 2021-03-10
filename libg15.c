@@ -122,12 +122,33 @@ static int initLibUsb()
     return G15_NO_ERROR;
 }
 
+int initG510() {
+    unsigned char cmd_buf_1[3] = {7, 3, 0};
+    unsigned char cmd_buf_2[19] = {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+    int ret = 0;
+
+    pthread_mutex_lock(&libusb_mutex);
+    ret = usb_control_msg(keyboard_device, USB_TYPE_CLASS + USB_RECIP_INTERFACE, 9, 0x301, 1, (char*)cmd_buf_2, 19, 10000);
+
+    ret = usb_control_msg(keyboard_device, USB_TYPE_CLASS + USB_RECIP_INTERFACE, 9, 0x307, 1, (char*)cmd_buf_1, 3, 10000);
+    pthread_mutex_unlock(&libusb_mutex);
+
+/* this command is sent twice by the Logitech driver with some time distance - not 100% sure this is necessary */
+    usleep(200);
+
+    pthread_mutex_lock(&libusb_mutex);
+    ret = usb_control_msg(keyboard_device, USB_TYPE_CLASS + USB_RECIP_INTERFACE, 9, 0x307, 1, (char*)cmd_buf_1, 3, 10000);
+    pthread_mutex_unlock(&libusb_mutex);
+
+    return 0;
+}
+
 static usb_dev_handle * findAndOpenDevice(libg15_devices_t handled_device, int device_index)
 {
     struct usb_bus *bus = 0;
     struct usb_device *dev = 0;
     int retries=0;
-    int j,i,k,l;
+    int j,i,k,l,m;
     int interface=0;
     
     for (bus = usb_busses; bus; bus = bus->next) 
@@ -271,7 +292,11 @@ static usb_dev_handle * findAndOpenG15() {
     for (i=0; g15_devices[i].name !=NULL  ;i++){
         g15_log(stderr,G15_LOG_INFO,"Trying to find %s\n",g15_devices[i].name);
         if((keyboard_device = findAndOpenDevice(g15_devices[i],i))){
-            break;
+	      if (g15DeviceCapabilities() & G15_DEVICE_G510) {
+		      g15_log(stderr, G15_LOG_INFO, "Initializing G510\n");
+		      initG510();
+	      }
+		break;
         }
         else
             g15_log(stderr,G15_LOG_INFO,"%s not found\n",g15_devices[i].name);
@@ -539,8 +564,36 @@ int setLEDs(unsigned int leds)
 {
     int retval = 0;
     unsigned char m_led_buf[4] = { 2, 4, 0, 0 };
+    unsigned char g510_led_buf[2] = {4, 0};
     m_led_buf[2] = ~(unsigned char)leds;
     
+	if(g15DeviceCapabilities() & G15_DEVICE_G510) {
+//Set keyboard color based on M led state.
+	switch (leds & 0x07) {
+	case 1:
+		setG510LEDColor(0, 0, 220);
+		break;
+	case 2:
+		setG510LEDColor(220, 0, 0);
+		break;
+	case 4:
+		setG510LEDColor(0, 220, 0);
+		break;
+	default:
+		setG510LEDColor(0, 0, 220);
+		break;
+	}
+/* A little conversion is needed because the led bitmap for the G510 is completely different from the other keyboards.
+for g510 it is: bits 0-3 = N/A; bit 4 = MR; bit 5 = M1; bit 6 = M2; bit 7 = M3; */
+	g510_led_buf[1] |= (leds & 0x01) << 7;
+	g510_led_buf[1] |= (leds & 0x02) << 5;
+	g510_led_buf[1] |= (leds & 0x04) << 3;
+	g510_led_buf[1] |= (leds & 0x08) << 1;
+	pthread_mutex_lock(&libusb_mutex);
+	retval = usb_control_msg(keyboard_device, USB_TYPE_CLASS + USB_RECIP_INTERFACE, 9, 0x304, 1, (char*)g510_led_buf, 2, 10000);
+	pthread_mutex_unlock(&libusb_mutex);
+	}
+
     if(shared_device>0)
         return G15_ERROR_UNSUPPORTED;
     
@@ -571,6 +624,21 @@ int setLCDBrightness(unsigned int level)
     }
     pthread_mutex_lock(&libusb_mutex);
     retval = usb_control_msg(keyboard_device, USB_TYPE_CLASS + USB_RECIP_INTERFACE, 9, 0x302, 0, (char*)usb_data, 4, 10000); 
+    pthread_mutex_unlock(&libusb_mutex);
+    return retval;
+}
+
+int setG510LEDColor(unsigned char r, unsigned char g, unsigned char b)
+{
+    int retval = 0;
+    unsigned char usb_data[] = { 4, 0, 0, 0 };
+
+    usb_data[1] = r;
+    usb_data[2] = g;
+    usb_data[3] = b;
+
+    pthread_mutex_lock(&libusb_mutex);
+    retval = usb_control_msg(keyboard_device, USB_TYPE_CLASS + USB_RECIP_INTERFACE, 9, 0x305, 1, (char*)usb_data, 4, 10000);
     pthread_mutex_unlock(&libusb_mutex);
     return retval;
 }
@@ -706,6 +774,138 @@ static void processKeyEvent9Byte(unsigned int *pressed_keys, unsigned char *buff
     }
 }
 
+static void processKeyEvent4Byte(unsigned int *pressed_keys, unsigned char *buffer)
+{
+	int i;
+
+	*pressed_keys = 0;
+
+	g15_log(stderr,G15_LOG_WARN,"Keyboard: %x, %x, %x, %x\n",buffer[0],buffer[1],buffer[2],buffer[3]);
+
+	if (buffer[0] == 0x02)
+	{
+		if (buffer[1]&0x01)
+			*pressed_keys |= G15_KEY_G1;
+
+		if (buffer[1]&0x02)
+			*pressed_keys |= G15_KEY_G2;
+
+		if (buffer[1]&0x04)
+			*pressed_keys |= G15_KEY_G3;
+
+		if (buffer[1]&0x08)
+			*pressed_keys |= G15_KEY_G4;
+
+		if (buffer[1]&0x10)
+			*pressed_keys |= G15_KEY_G5;
+
+		if (buffer[1]&0x20)
+			*pressed_keys |= G15_KEY_G6;
+
+		if (buffer[1]&0x40)
+			*pressed_keys |= G15_KEY_G7;
+
+		if (buffer[1]&0x80)
+			*pressed_keys |= G15_KEY_G8;
+
+		if (buffer[2]&0x01)
+			*pressed_keys |= G15_KEY_G9;
+
+		if (buffer[2]&0x02)
+			*pressed_keys |= G15_KEY_G10;
+
+		if (buffer[2]&0x04)
+			*pressed_keys |= G15_KEY_G11;
+
+		if (buffer[2]&0x08)
+			*pressed_keys |= G15_KEY_G12;
+
+		if (buffer[2]&0x10)
+			*pressed_keys |= G15_KEY_M1;
+
+		if (buffer[2]&0x20)
+			*pressed_keys |= G15_KEY_M2;
+
+		if (buffer[2]&0x40)
+			*pressed_keys |= G15_KEY_M3;
+
+		if (buffer[2]&0x80)
+			*pressed_keys |= G15_KEY_MR;
+		if (buffer[3]&0x1)
+			*pressed_keys |= G15_KEY_LIGHT;
+	}
+}
+
+// Logitech G510 Media Keys implementation. Unknown if this will work for other
+// models. Using the backlight key as a modifier. The assumption is you would
+// normally not be holding down the backlight key while pressing G-keys.
+static void processKeyEvent2Byte(unsigned int *pressed_keys, unsigned char *buffer)
+{
+	// Key modifier
+	*pressed_keys |= G15_KEY_LIGHT;
+
+	// XF86AudioPlay 175
+	if (*pressed_keys & G15_KEY_G1)
+		*pressed_keys -= G15_KEY_G1;
+
+	// XF86AudioStop 176
+	if (*pressed_keys & G15_KEY_G2)
+		*pressed_keys -= G15_KEY_G2;
+	// XF86AudioPrev 177
+	else if (*pressed_keys & G15_KEY_G3)
+		*pressed_keys -= G15_KEY_G3;
+	// XF86AudioMute 179
+	else if (*pressed_keys & G15_KEY_G5)
+		*pressed_keys -= G15_KEY_G5;
+	// XF86AudioRaiseVolume 180
+	else if (*pressed_keys & G15_KEY_G6){
+		*pressed_keys -= G15_KEY_G6;
+		if (*pressed_keys & G15_KEY_G7){
+		}
+	}
+	// XF86AudioLowerVolume 181
+	else if (*pressed_keys & G15_KEY_G7)
+		*pressed_keys -= G15_KEY_G7;
+
+
+	// XF86AudioNext 178
+	if (*pressed_keys & G15_KEY_G4)
+		*pressed_keys -= G15_KEY_G4;
+
+	g15_log(stderr,G15_LOG_WARN,"Keyboard: %x, %x\n", buffer[0], buffer[1]);
+
+	if (buffer[0] == 0x02)
+	{
+	// XF86AudioPlay
+	if (buffer[1] & 0x08)
+	*pressed_keys |= G15_KEY_G1;
+
+	// XF86AudioStop
+	if (buffer[1] & 0x04)
+	*pressed_keys |= G15_KEY_G2;
+	// XF86AudioPrev
+	else if (buffer[1] & 0x02)
+		*pressed_keys |= G15_KEY_G3;
+	// XF86AudioMute
+	else if (buffer[1] & 0x16)
+		*pressed_keys |= G15_KEY_G5;
+	// XF86AudioRaiseVolume
+	else if (buffer[1] & 0x32){
+		*pressed_keys |= G15_KEY_G6;
+	if (buffer[1] & 0x64){
+		}
+	}
+	// XF86AudioLowerVolume
+	else if (buffer[1] & 0x64)
+		*pressed_keys |= G15_KEY_G7;
+
+	// XF86AudioNext
+	if (buffer[1] & 0x01)
+	*pressed_keys |= G15_KEY_G4;
+;
+	}
+}
+
 static void processKeyEvent5Byte(unsigned int *pressed_keys, unsigned char *buffer)
 {
     int i;
@@ -771,6 +971,7 @@ int getPressedKeys(unsigned int *pressed_keys, unsigned int timeout)
 {
     unsigned char buffer[G15_KEY_READ_LENGTH];
     int ret = 0;
+    int caps = 0;
     #ifdef LIBUSB_BLOCKS
     ret = usb_interrupt_read(keyboard_device, g15_keys_endpoint, (char*)buffer, G15_KEY_READ_LENGTH, timeout);
     #else
@@ -783,14 +984,26 @@ int getPressedKeys(unsigned int *pressed_keys, unsigned int timeout)
             return G15_ERROR_TRY_AGAIN;    
     }
     
+	caps = g15DeviceCapabilities();
+
     switch(ret) {
+        case 4:
+           processKeyEvent4Byte(pressed_keys, buffer);
+           return G15_NO_ERROR;
         case 5:
             processKeyEvent5Byte(pressed_keys, buffer);
             return G15_NO_ERROR;
         case 9:
             processKeyEvent9Byte(pressed_keys, buffer);
             return G15_NO_ERROR;
-        default:
+	case 2:
+	    if (g15DeviceCapabilities() & G15_DEVICE_G510)
+	    	{ 
+		processKeyEvent2Byte(pressed_keys, buffer);
+		return G15_NO_ERROR;
+		}
+        
+	default:
             return handle_usb_errors("Keyboard Read", ret); /* allow the app to deal with errors */
     }
 }
