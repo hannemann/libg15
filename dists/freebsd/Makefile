@@ -1,7 +1,5 @@
-# $FreeBSD: head/sysutils/libg15/Makefile 563531 2021-01-31 21:17:27Z yuri $
-
 PORTNAME=	libg15
-DISTVERSION=	3.0.3
+DISTVERSION=	3.0.5
 CATEGORIES=	sysutils
 MASTER_SITES=	https://gitlab.com/menelkir/${PORTNAME}/-/archive/${PORTVERSION}/
 
