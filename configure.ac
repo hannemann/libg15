@@ -16,21 +16,21 @@ AC_PROG_CC
 LT_INIT
 
 case $host_os in
-	*linux*) 
-	  AC_DEFINE([OSTYPE_LINUX], [1],[Target OS is Linux])
-	  ;;
+	*linux*)
+		AC_DEFINE([OSTYPE_LINUX], [1],[Target OS is Linux])
+		;;
 	*darwin*)
-	  AC_DEFINE([OSTYPE_DARWIN], [1],[Target OS is Darwin])
-	  ;;
+		AC_DEFINE([OSTYPE_DARWIN], [1],[Target OS is Darwin])
+		;;
 	*freebsd*)
-	  AC_DEFINE([OSTYPE_FREEBSD], [1],[Target OS is FreeBSD])
-	  ;;
-        *solaris*)
-          AC_DEFINE([OSTYPE_SOLARIS], [1],[Target OS is Solaris])
-	  AC_SEARCH_LIBS([nanosleep],rt,[],[],[])
-          AC_DEFINE(SUN_LIBUSB, 1, [Define to 1 for Sun version of libusb.])
-	  libusb_blocks=true	  
-	  ;;
+		AC_DEFINE([OSTYPE_FREEBSD], [1],[Target OS is FreeBSD])
+		;;
+	*solaris*)
+		AC_DEFINE([OSTYPE_SOLARIS], [1],[Target OS is Solaris])
+		AC_SEARCH_LIBS([nanosleep],rt,[],[],[])
+		AC_DEFINE(SUN_LIBUSB, 1, [Define to 1 for Sun version of libusb.])
+		libusb_blocks=true
+		;;
 esac
 
 # Checks for libraries.
@@ -38,7 +38,7 @@ AC_CHECK_LIB([usb], [main], ,AC_MSG_ERROR(["libusb not found. please install it"
 
 dnl Some versions of libusb do not honour timeout and block. Suns' version is one of them.
 if test "x$libusb_blocks" == "xtrue"; then
-      AC_DEFINE([LIBUSB_BLOCKS], [1],[Define if libusb implementation blocks on read or write])
+		AC_DEFINE([LIBUSB_BLOCKS], [1],[Define if libusb implementation blocks on read or write])
 fi
 
 # Checks for header files.
