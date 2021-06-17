@@ -56,4 +56,12 @@
 3.0.1
 * Added support for Logitech G510
 3.0.2
+* Cleanup
+3.0.3
+* Removed AC prereq
+3.0.4
+* Added: G815 keyboards 
+3.0.5
+* Updated config.guess and config.sub. Thanks  Nicolas F. (@CounterPillow)
+3.0.6
 * Some cleanups and fixes
