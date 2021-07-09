@@ -1,3 +1,18 @@
+libg15 3.0.6 buster; urgency=low
+  * Several cleanups and fixups
+
+libg15 3.0.5 buster; urgency=low
+  * Updated config.guess and config.sub. Thanks  Nicolas F. (@CounterPillow)
+
+libg15 3.0.4 buster; urgency=low
+  * Added support for G510 keyboards
+
+libg15 3.0.3 buster; urgency=low
+  * Removed AC prereqs
+
+libg15 3.0.2 buster; urgency=low
+  * Cleanup code
+
 libg15 3.0.1 buster; urgency=low
   * Added support for G510 keyboards
 

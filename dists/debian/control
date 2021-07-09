@@ -17,5 +17,5 @@ Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Library for interfacing with the Logitech G15 Keyboard
- Provides for low-level control of the lcd and extra keys on the 
+ Provides for low-level control of the lcd and extra keys on the
  Logitech G15 keyboard.
