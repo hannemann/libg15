@@ -724,7 +724,6 @@ static void processKeyEvent4Byte(unsigned int *pressed_keys, unsigned char *buff
 		if (buffer[2]&0x80)
 			*pressed_keys |= G15_KEY_MR;
 		if (buffer[3]&0x1)
-
 			*pressed_keys |= G15_KEY_LIGHT;
 	}
 }
