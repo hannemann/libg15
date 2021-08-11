@@ -79,13 +79,12 @@
 		G15_BUFFER_LEN = 0x03e0
 	};
 
-/*	enum {
+	enum {
 		G15_LED_M1=1<<0,
 		G15_LED_M2=1<<1,
 		G15_LED_M3=1<<2,
 		G15_LED_MR=1<<3
 	}; 
-*/
 
 	enum {
 		G15_CONTRAST_LOW=0,
