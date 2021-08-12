@@ -844,6 +844,8 @@ static void processKeyEvent5Byte(unsigned int *pressed_keys, unsigned char *buff
             *pressed_keys |= G15_KEY_G7;
         if (buffer[1]&0x80)
             *pressed_keys |= G15_KEY_G8;
+        if (buffer[2]&0x01)
+            *pressed_keys |= G15_KEY_G9;
         if (buffer[2]&0x02)
             *pressed_keys |= G15_KEY_G10;
         if (buffer[2]&0x04)
