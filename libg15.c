@@ -245,7 +245,7 @@ static usb_dev_handle * findAndOpenDevice(libg15_devices_t handled_device, int d
 										g15_lcd_endpoint = ep->bEndpointAddress;
 									}
 									#if 0
-										usb_resetep(devh,ep->bEndpointAddress);
+										usb_clear_halt(devh,ep->bEndpointAddress);
 									#endif
 								}
 								if (ret){
