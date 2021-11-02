@@ -46,6 +46,7 @@ static pthread_mutex_t libusb_mutex;
 const libg15_devices_t g15_devices[] = {
 	DEVICE("Logitech G15",0x46d,0xc222,G15_LCD|G15_KEYS),
 	DEVICE("Logitech G11",0x46d,0xc225,G15_KEYS),
+        DEVICE("Logitech G110",0x46d,0xc22b,G15_KEYS),
 	DEVICE("Logitech G815",0x46d,0xc33f,G15_KEYS),
 	DEVICE("Logitech G510",0x46d,0xc22d,G15_LCD|G15_KEYS|G15_DEVICE_IS_SHARED|G15_DEVICE_G510), /* without audio activated */
 	DEVICE("Logitech G510",0x46d,0xc22e,G15_LCD|G15_KEYS|G15_DEVICE_IS_SHARED|G15_DEVICE_G510), /* with audio activated */
