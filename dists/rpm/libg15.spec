@@ -11,7 +11,7 @@ Source: https://gitlab.com/menelkir/libg15/-/archive/3.0/libg15-3.0.tar.bz2
 URL: https://gitlab.com/menelkir/libg15
 Distribution: Linux
 Vendor: NONE
-Packager: Daniel Menelkir <menelkir@itroll.org>
+Packager: Daniel Menelkir <dmenelkir@gmaill.com>
 Buildroot: /var/tmp/libg15-%{PACKAGE_VERSION}-root
 Requires: libusb
 BuildRequires: libusb-devel

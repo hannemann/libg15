@@ -3,7 +3,7 @@ DISTVERSION=	3.0.5
 CATEGORIES=	sysutils
 MASTER_SITES=	https://gitlab.com/menelkir/${PORTNAME}/-/archive/${PORTVERSION}/
 
-MAINTAINER=	menelkir@itroll.org
+MAINTAINER=	dmenelkir@gmaill.com
 COMMENT=	API for control of LCD and the extra keys on Logitech keyboards
 
 LICENSE=	GPLv2
