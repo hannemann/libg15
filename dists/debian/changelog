@@ -25,7 +25,7 @@ libg15 1.2.9 edgy; urgency=low
 libg15 1.2.8 edgy; urgency=low
   * Forked and version bump
 
--- Daniel Menelkir <dmenelkir@gmaill.com> Tue, 12 Jan 2021 16:21:10 -0300
+-- Daniel Menelkir <dmenelkir@gmail.com> Tue, 12 Jan 2021 16:21:10 -0300
 
 libg15 1.2.7 edgy; urgency=low
   * Fix keypress detection for G15v2 keyboards
